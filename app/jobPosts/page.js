@@ -5,6 +5,7 @@ import Link from "next/link";
 import viewAllJobs from "@/app/lib/viewAllJobs";
 import searchJob from "@/app/lib/searchJob";
 import { SearchBar } from "@/app/components/SearchBar";
+import { AddJobButton } from "@/app/components/AddJobButton";
 
 export default function JobPosts() {
     const [jobPosts, setJobPosts] = useState([]);
@@ -35,10 +36,15 @@ export default function JobPosts() {
         }
     };
 
+    const handleJobAdded = (newJob) => {
+        setJobPosts([...jobPosts, newJob]);
+    };
+
     return (
         <div>
-            <div className="mb-8">
+            <div className="flex justify-between items-center mb-8">
                 <SearchBar onSearch={handleSearch} />
+                <AddJobButton onJobAdded={handleJobAdded} />
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
