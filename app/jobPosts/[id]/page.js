@@ -7,6 +7,7 @@ export default function JobPostDetails({ params }) {
     const [jobPost, setJobPost] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
+        postId: "",
         postProfile: "",
         postDescription: "",
         requiredExperience: "",
@@ -18,6 +19,7 @@ export default function JobPostDetails({ params }) {
             const job = await viewAJob(id);
             setJobPost(job);
             setFormData({
+                postId: job.postId,
                 postProfile: job.postProfile,
                 postDescription: job.postDescription,
                 requiredExperience: job.requiredExperience,
@@ -30,22 +32,19 @@ export default function JobPostDetails({ params }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(
-                `http://localhost:8080/jobPost`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        postId: id,
-                        ...formData,
-                        postTechStack: formData.postTechStack
-                            .split(",")
-                            .map((skill) => skill.trim()),
-                    }),
-                }
-            );
+            const response = await fetch(`http://localhost:8080/jobPost`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    postId: id,
+                    ...formData,
+                    postTechStack: formData.postTechStack
+                        .split(",")
+                        .map((skill) => skill.trim()),
+                }),
+            });
 
             if (response.ok) {
                 setIsEditing(false);

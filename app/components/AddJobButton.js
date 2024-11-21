@@ -5,31 +5,54 @@ import { useState } from "react";
 export function AddJobButton({ onJobAdded }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [jobData, setJobData] = useState({
+        postId: "",
         postProfile: "",
         postDescription: "",
+        requiredExperience: "",
+        postTechStack: [],
     });
+
+    const techStackOptions = [
+        "JavaScript",
+        "Python",
+        "Java",
+        "React",
+        "Node.js",
+        "Angular",
+        "Vue.js",
+        "Spring Boot",
+        "MongoDB",
+        "PostgreSQL",
+        // Add more options as needed
+    ];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('/api/jobPost', {
-                method: 'POST',
+            const response = await fetch("http://localhost:8080/jobPost", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify(jobData),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to add job');
+                throw new Error("Failed to add job");
             }
 
             const newJob = await response.json();
             onJobAdded(newJob);
             setIsModalOpen(false);
-            setJobData({ postProfile: "", postDescription: "" });
+            setJobData({
+                postId: "",
+                postProfile: "",
+                postDescription: "",
+                requiredExperience: "",
+                postTechStack: [],
+            });
         } catch (error) {
-            console.error('Error adding job:', error);
+            console.error("Error adding job:", error);
         }
     };
 
@@ -48,24 +71,96 @@ export function AddJobButton({ onJobAdded }) {
                         <h2 className="text-xl font-bold mb-4">Add New Job</h2>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
-                                <label className="block mb-2">Profile Title</label>
+                                <label className="block mb-2">Job ID</label>
                                 <input
-                                    type="text"
-                                    value={jobData.postProfile}
-                                    onChange={(e) => setJobData({...jobData, postProfile: e.target.value})}
+                                    type="number"
+                                    value={jobData.postId}
+                                    onChange={(e) =>
+                                        setJobData({
+                                            ...jobData,
+                                            postId: e.target.value,
+                                        })
+                                    }
                                     className="w-full p-2 border rounded"
                                     required
                                 />
                             </div>
                             <div className="mb-4">
-                                <label className="block mb-2">Description</label>
+                                <label className="block mb-2">Job Title</label>
+                                <input
+                                    type="text"
+                                    value={jobData.postProfile}
+                                    onChange={(e) =>
+                                        setJobData({
+                                            ...jobData,
+                                            postProfile: e.target.value,
+                                        })
+                                    }
+                                    className="w-full p-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block mb-2">
+                                    Job Description
+                                </label>
                                 <textarea
                                     value={jobData.postDescription}
-                                    onChange={(e) => setJobData({...jobData, postDescription: e.target.value})}
+                                    onChange={(e) =>
+                                        setJobData({
+                                            ...jobData,
+                                            postDescription: e.target.value,
+                                        })
+                                    }
                                     className="w-full p-2 border rounded"
                                     rows="4"
                                     required
                                 />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block mb-2">
+                                    Required Experience
+                                </label>
+                                <input
+                                    type="number"
+                                    value={jobData.requiredExperience}
+                                    onChange={(e) =>
+                                        setJobData({
+                                            ...jobData,
+                                            requiredExperience: e.target.value,
+                                        })
+                                    }
+                                    className="w-full p-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block mb-2">Job Tech Stack</label>
+                                <select
+                                    multiple
+                                    value={jobData.postTechStack}
+                                    onChange={(e) => {
+                                        const selectedOptions = Array.from(
+                                            e.target.selectedOptions,
+                                            (option) => option.value
+                                        );
+                                        setJobData({
+                                            ...jobData,
+                                            postTechStack: selectedOptions,
+                                        });
+                                    }}
+                                    className="w-full p-2 border rounded"
+                                    required
+                                >
+                                    {techStackOptions.map((tech) => (
+                                        <option key={tech} value={tech}>
+                                            {tech}
+                                        </option>
+                                    ))}
+                                </select>
+                                <p className="text-sm text-gray-500 mt-1">
+                                    Hold Ctrl/Cmd to select multiple technologies
+                                </p>
                             </div>
                             <div className="flex justify-end gap-2">
                                 <button
@@ -88,4 +183,4 @@ export function AddJobButton({ onJobAdded }) {
             )}
         </>
     );
-} 
+}
