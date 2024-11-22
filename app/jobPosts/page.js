@@ -42,12 +42,12 @@ export default function JobPosts() {
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-center items-center gap-6 my-6">
                 <SearchBar onSearch={handleSearch} />
                 <AddJobButton onJobAdded={handleJobAdded} />
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 p-12">
                 {jobPosts.map((jobPost) => (
                     <div
                         key={jobPost.postId}

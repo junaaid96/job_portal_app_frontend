@@ -18,7 +18,7 @@ export function SearchBar({ onSearch }) {
                 value={searchInput}
                 onChange={handleInputChange}
                 placeholder="Search jobs..."
-                className="p-2 border border-gray-300 rounded-lg m-auto mt-5"
+                className="p-2 border border-gray-300 rounded-lg"
             />
         </div>
     );

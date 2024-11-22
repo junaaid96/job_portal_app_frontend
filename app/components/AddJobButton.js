@@ -23,7 +23,6 @@ export function AddJobButton({ onJobAdded }) {
         "Spring Boot",
         "MongoDB",
         "PostgreSQL",
-        // Add more options as needed
     ];
 
     const handleSubmit = async (e) => {
@@ -66,8 +65,8 @@ export function AddJobButton({ onJobAdded }) {
             </button>
 
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-6 rounded-lg w-96">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto">
+                    <div className="bg-white p-6 rounded-lg w-2/3 my-8 max-h-[90vh] overflow-y-auto">
                         <h2 className="text-xl font-bold mb-4">Add New Job</h2>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">

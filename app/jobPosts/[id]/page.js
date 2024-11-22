@@ -80,7 +80,7 @@ export default function JobPostDetails({ params }) {
     if (!jobPost) return <div>Loading...</div>;
 
     return (
-        <div className="m-auto lg:w-1/2 mt-6 p-5">
+        <div className="w-1/3 m-auto mt-12">
             {!isEditing ? (
                 <>
                     <h1 className="text-3xl font-bold">
@@ -89,7 +89,7 @@ export default function JobPostDetails({ params }) {
                     <p className="my-6">{jobPost.postDescription}</p>
                     <p>Required Experience: {jobPost.requiredExperience}</p>
                     <p>Skills: {jobPost.postTechStack.join(", ")}</p>
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 mt-6">
                         <button
                             onClick={() => setIsEditing(true)}
                             className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -107,7 +107,7 @@ export default function JobPostDetails({ params }) {
             ) : (
                 <form onSubmit={handleSubmit} className="w-full max-w-lg">
                     <div className="mb-4">
-                        <label className="block mb-2">Profile:</label>
+                        <label className="block mb-2">Job Title:</label>
                         <input
                             type="text"
                             value={formData.postProfile}
