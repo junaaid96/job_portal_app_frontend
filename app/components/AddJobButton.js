@@ -69,7 +69,7 @@ export function AddJobButton({ onJobAdded }) {
                     <div className="bg-white p-6 rounded-lg w-2/3 my-8 max-h-[90vh] overflow-y-auto">
                         <h2 className="text-xl font-bold mb-4">Add New Job</h2>
                         <form onSubmit={handleSubmit}>
-                            <div className="mb-4">
+                            {/* <div className="mb-4">
                                 <label className="block mb-2">Job ID</label>
                                 <input
                                     type="number"
@@ -83,7 +83,7 @@ export function AddJobButton({ onJobAdded }) {
                                     className="w-full p-2 border rounded"
                                     required
                                 />
-                            </div>
+                            </div> */}
                             <div className="mb-4">
                                 <label className="block mb-2">Job Title</label>
                                 <input
