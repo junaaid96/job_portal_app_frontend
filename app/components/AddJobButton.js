@@ -5,7 +5,7 @@ import { useState } from "react";
 export function AddJobButton({ onJobAdded }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [jobData, setJobData] = useState({
-        postId: "",
+        // postId: "",
         postProfile: "",
         postDescription: "",
         requiredExperience: "",
@@ -44,7 +44,7 @@ export function AddJobButton({ onJobAdded }) {
             onJobAdded(newJob);
             setIsModalOpen(false);
             setJobData({
-                postId: "",
+                // postId: "",
                 postProfile: "",
                 postDescription: "",
                 requiredExperience: "",
