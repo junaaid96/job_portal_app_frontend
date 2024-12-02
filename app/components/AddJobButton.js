@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
+import decodeJWT from "@/app/utils/decodeJWT";
 
 export function AddJobButton({ onJobAdded }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [jobData, setJobData] = useState({
-        // postId: "",
         postProfile: "",
         postDescription: "",
         requiredExperience: "",
         postTechStack: [],
+        addedBy: "",
     });
 
     const techStackOptions = [
@@ -28,28 +30,51 @@ export function AddJobButton({ onJobAdded }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:8080/jobPost", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(jobData),
-            });
+            const token = localStorage.getItem("token");
 
-            if (!response.ok) {
-                throw new Error("Failed to add job");
+            // Decode token and get username
+            const decodedToken = decodeJWT(token);
+            const username = decodedToken?.sub || decodedToken?.username || "";
+
+            console.log(username);
+
+            const jobDataWithUser = {
+                ...jobData,
+                addedBy: username,
+            };
+
+            try {
+                const response = await axios.post(
+                    "http://localhost:8080/jobPost",
+                    jobDataWithUser,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                if (response.status !== 200) {
+                    throw new Error("Failed to add job");
+                }
+
+                // Handle the response
+                console.log(response.data);
+
+                const newJob = response.data;
+                onJobAdded(newJob);
+                setIsModalOpen(false);
+                setJobData({
+                    postProfile: "",
+                    postDescription: "",
+                    requiredExperience: "",
+                    postTechStack: [],
+                    addedBy: "",
+                });
+            } catch (error) {
+                console.error("Error:", error);
             }
-
-            const newJob = await response.json();
-            onJobAdded(newJob);
-            setIsModalOpen(false);
-            setJobData({
-                // postId: "",
-                postProfile: "",
-                postDescription: "",
-                requiredExperience: "",
-                postTechStack: [],
-            });
         } catch (error) {
             console.error("Error adding job:", error);
         }
@@ -69,21 +94,6 @@ export function AddJobButton({ onJobAdded }) {
                     <div className="bg-white p-6 rounded-lg w-2/3 my-8 max-h-[90vh] overflow-y-auto">
                         <h2 className="text-xl font-bold mb-4">Add New Job</h2>
                         <form onSubmit={handleSubmit}>
-                            {/* <div className="mb-4">
-                                <label className="block mb-2">Job ID</label>
-                                <input
-                                    type="number"
-                                    value={jobData.postId}
-                                    onChange={(e) =>
-                                        setJobData({
-                                            ...jobData,
-                                            postId: e.target.value,
-                                        })
-                                    }
-                                    className="w-full p-2 border rounded"
-                                    required
-                                />
-                            </div> */}
                             <div className="mb-4">
                                 <label className="block mb-2">Job Title</label>
                                 <input
@@ -134,7 +144,9 @@ export function AddJobButton({ onJobAdded }) {
                                 />
                             </div>
                             <div className="mb-4">
-                                <label className="block mb-2">Job Tech Stack</label>
+                                <label className="block mb-2">
+                                    Job Tech Stack
+                                </label>
                                 <select
                                     multiple
                                     value={jobData.postTechStack}
@@ -158,7 +170,8 @@ export function AddJobButton({ onJobAdded }) {
                                     ))}
                                 </select>
                                 <p className="text-sm text-gray-500 mt-1">
-                                    Hold Ctrl/Cmd to select multiple technologies
+                                    Hold Ctrl/Cmd to select multiple
+                                    technologies
                                 </p>
                             </div>
                             <div className="flex justify-end gap-2">

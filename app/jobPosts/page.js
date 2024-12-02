@@ -43,6 +43,12 @@ export default function JobPosts() {
     return (
         <div>
             <div className="flex justify-center items-center gap-6 my-6">
+                <Link
+                    href="/"
+                    className="inline-block px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700"
+                >
+                    Home
+                </Link>
                 <SearchBar onSearch={handleSearch} />
                 <AddJobButton onJobAdded={handleJobAdded} />
             </div>

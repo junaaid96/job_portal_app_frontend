@@ -1,6 +1,9 @@
 "use client";
 import { useState, useEffect, use } from "react";
+import axios from "axios";
 import viewAJob from "@/app/lib/viewAJob";
+import decodeJWT from "@/app/utils/decodeJWT";
+
 
 export default function JobPostDetails({ params }) {
     const id = use(params).id;
@@ -32,26 +35,27 @@ export default function JobPostDetails({ params }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`http://localhost:8080/jobPost`, {
-                method: "PUT",
+            const token = localStorage.getItem('token');
+            const decodedToken = decodeJWT(token);
+            const username = decodedToken.sub;
+
+            await axios.put(`http://localhost:8080/jobPost`, {
+                postId: id,
+                ...formData,
+                addedBy: username,
+                postTechStack: formData.postTechStack
+                    .split(",")
+                    .map((skill) => skill.trim()),
+            }, {
                 headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    postId: id,
-                    ...formData,
-                    postTechStack: formData.postTechStack
-                        .split(",")
-                        .map((skill) => skill.trim()),
-                }),
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
-            if (response.ok) {
-                setIsEditing(false);
-                // Refresh the job data
-                const updatedJob = await viewAJob(id);
-                setJobPost(updatedJob);
-            }
+            setIsEditing(false);
+            // Refresh the job data
+            const updatedJob = await viewAJob(id);
+            setJobPost(updatedJob);
         } catch (error) {
             console.error("Error updating job post:", error);
         }
@@ -60,17 +64,15 @@ export default function JobPostDetails({ params }) {
     const handleDelete = async () => {
         if (window.confirm("Are you sure you want to delete this job post?")) {
             try {
-                const response = await fetch(
-                    `http://localhost:8080/jobPost/${id}`,
-                    {
-                        method: "DELETE",
+                const token = localStorage.getItem('token');
+                await axios.delete(`http://localhost:8080/jobPost/${id}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
                     }
-                );
-
-                if (response.ok) {
-                    // Redirect to the jobs listing page after successful deletion
-                    window.location.href = "/jobPosts";
-                }
+                });
+                
+                // Redirect to the jobs listing page after successful deletion
+                window.location.href = "/jobPosts";
             } catch (error) {
                 console.error("Error deleting job post:", error);
             }
@@ -78,6 +80,11 @@ export default function JobPostDetails({ params }) {
     };
 
     if (!jobPost) return <div>Loading...</div>;
+
+    const token = localStorage.getItem('token');
+    console.log(token);
+    const username = decodeJWT(token).sub;
+    console.log(username);
 
     return (
         <div className="w-1/3 m-auto mt-12">
@@ -89,20 +96,23 @@ export default function JobPostDetails({ params }) {
                     <p className="my-6">{jobPost.postDescription}</p>
                     <p>Required Experience: {jobPost.requiredExperience}</p>
                     <p>Skills: {jobPost.postTechStack.join(", ")}</p>
-                    <div className="flex gap-4 mt-6">
-                        <button
-                            onClick={() => setIsEditing(true)}
-                            className="bg-blue-500 text-white px-4 py-2 rounded"
-                        >
-                            Edit Job Post
-                        </button>
-                        <button
-                            onClick={handleDelete}
-                            className="bg-red-500 text-white px-4 py-2 rounded"
-                        >
-                            Delete Job Post
-                        </button>
-                    </div>
+                    <p>Added by: {jobPost.addedBy}</p>
+                    {username === jobPost.addedBy && (
+                        <div className="flex gap-4 mt-6">
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                            >
+                                Edit Job Post
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                className="bg-red-500 text-white px-4 py-2 rounded"
+                            >
+                                Delete Job Post
+                            </button>
+                        </div>
+                    )}
                 </>
             ) : (
                 <form onSubmit={handleSubmit} className="w-full max-w-lg">
