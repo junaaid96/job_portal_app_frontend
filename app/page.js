@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import decodeJWT from "@/app/utils/decodeJWT";
+import Dashboard from "./components/Dashboard";
 
 export default function Home() {
     const [isLogin, setIsLogin] = useState(true);
@@ -59,7 +58,8 @@ export default function Home() {
             if (isLogin) {
                 const token = await response.text();
                 if (token && token !== "Invalid username or password") {
-                    const expirationTime = new Date().getTime() + 30 * 60 * 1000; // 30 minutes from now
+                    const expirationTime =
+                        new Date().getTime() + 30 * 60 * 1000; // 30 minutes from now
 
                     // Store token and expiration time in localStorage
                     localStorage.setItem("token", token);
@@ -104,7 +104,9 @@ export default function Home() {
 
     return (
         <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-            <h1 className="text-2xl font-bold border p-3 shadow">Job Portal App</h1>
+            <h1 className="text-2xl font-bold border p-3 shadow">
+                Job Portal App
+            </h1>
 
             {!token ? (
                 <div className="w-full max-w-md">
@@ -165,27 +167,7 @@ export default function Home() {
                     </button>
                 </div>
             ) : (
-                <div className="text-center">
-                    <div className="flex gap-3 mb-4">
-                    <h2 className="text-xl">
-                        Welcome, {decodeJWT(token).sub}
-                    </h2>
-                    <button
-                            onClick={handleLogout}
-                            className="block btn-sm px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-700"
-                        >
-                            Logout
-                        </button>
-                    </div>
-                    <div className="space-y-4">
-                        <Link
-                            href="/jobPosts"
-                            className="inline-block px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700"
-                        >
-                            View All Job Posts
-                        </Link>
-                    </div>
-                </div>
+                <Dashboard token={token} handleLogout={handleLogout} />
             )}
         </div>
     );
